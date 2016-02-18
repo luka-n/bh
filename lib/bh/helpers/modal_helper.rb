@@ -39,11 +39,14 @@ module Bh
       modal = Bh::Modal.new self, *args, &block
       modal.extract! :button, :size, :body, :title, :id
 
-      modal.extract_from :button, [:context, :size, :layout, :caption]
-      modal.append_class_to! :button, :btn
-      modal.append_class_to! :button, modal.button_context_class
-      modal.append_class_to! :button, modal.button_size_class
-      modal.merge! button: {caption: modal.caption}
+      options = modal.instance_variable_get(:@options)
+      unless options.has_key?(:button) && !options[:button]
+        modal.extract_from :button, [:context, :size, :layout, :caption]
+        modal.append_class_to! :button, :btn
+        modal.append_class_to! :button, modal.button_context_class
+        modal.append_class_to! :button, modal.button_size_class
+        modal.merge! button: {caption: modal.caption}
+      end
 
       modal.append_class_to! :div, :'modal-dialog'
       modal.append_class_to! :div, modal.dialog_size_class
